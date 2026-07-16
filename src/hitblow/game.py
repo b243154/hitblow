@@ -7,6 +7,7 @@
 """
 
 from .core import judge, make_secret
+from .limit import check_limit
 
 
 def play(digits=3):
@@ -23,9 +24,12 @@ def play(digits=3):
         # 例:  from .hint import hint
         #      if guess == "h":
         #          print(hint(secret)); continue
-        from .hint import hint 
-        print(hint(secret, guess)) # 数の和を比較するヒントを追加
+        from .hint import hint
 
+        print(hint(secret, guess))  # 数の和を比較するヒントを追加
+
+        if check_limit(tries, secret, digits):
+            break
 
         if len(guess) != digits or not guess.isdigit():
             print(f"{digits} 桁の数字で入力してね")
@@ -34,7 +38,6 @@ def play(digits=3):
         hit, blow = judge(secret, guess)
         print(f"  Hit={hit}  Blow={blow}")
         if hit == digits:
-
             # ===== ③ 勝利時に足す（スコア・履歴 など）: ここに書く =====
 
             print(f"正解！ {tries} 回で当たり（答え {secret}）")
