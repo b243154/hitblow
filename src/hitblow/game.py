@@ -23,6 +23,9 @@ def play(digits=3):
         # 例:  from .hint import hint
         #      if guess == "h":
         #          print(hint(secret)); continue
+        from .hint import hint 
+        print(hint(secret, guess)) # 数の和を比較するヒントを追加
+
 
         if len(guess) != digits or not guess.isdigit():
             print(f"{digits} 桁の数字で入力してね")
