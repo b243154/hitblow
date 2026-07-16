@@ -1,7 +1,6 @@
 """コマンドの入口。第3回で `hitblow` コマンドがここ（main）を呼ぶ。"""
 
-from .game import play
-
+from .game2 import play
 
 def main():
     # 1. ユーザーに桁数を入力してもらう
