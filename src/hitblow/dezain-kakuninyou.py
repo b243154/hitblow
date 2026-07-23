@@ -33,6 +33,8 @@ while hp > 0:
 
         hp -= 1
 
+
+
     elif command == "2":
         print("呪文を唱えた！")
         print("ヒント：○○")
@@ -52,6 +54,11 @@ if hp == 0:
     print("HPがなくなった…")
     print("GAME OVER")
     print("=" * 40)
+
+
+#      ／￣＼
+#    ／・ω・＼
+#    ＼＿＿／
 
 
     
