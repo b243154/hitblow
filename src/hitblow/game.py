@@ -1,43 +1,98 @@
-"""ゲームの進行（入力・表示・ループ）。
-
-★ チームで足す機能は **自分の担当の場所**に書く（1機能=1ファイル）。
-   下の「ここに足す」場所は3か所（① 開始時 ② 入力コマンド ③ 勝利時）。
-   ペアごとに**別の場所**を直すので、並行作業でも衝突しない。
-   import も自分の場所の近くに書くこと（ファイル先頭にまとめない＝衝突回避）。
-"""
-
-from .core import judge, make_secret
-from .limit import check_limit
+from .core import make_secret, judge
+from .hint import hint  # 呪文で使うヒント関数
 
 
-def play(digits):
+def show_stage(stage, monster, digits, hp, ascii_art):
+    print("=" * 40)
+    print(f"         STAGE {stage}")
+    print("=" * 40)
+    if ascii_art:
+        print(ascii_art)
+    print(f"{monster} が あらわれた！")
+    print()
+    print(f"HP : {'♥' * hp} ({hp})")
+    print(f"数字 : {digits}桁")
+    print()
+    print("1. 戦う (数字を予想)")
+    print("2. 呪文 (ヒントを見る)")
+    print("3. にげる (やめる)")
+    print("=" * 40)
+
+
+def play(stage, digits, monster, hp, ascii_art):
     secret = make_secret(digits)
-    print(f"Hit & Blow（{digits} 桁・重複なし）")
 
-    # ===== ① 開始時に足す（難易度・あいさつ など）: ここに書く =====
+    while hp > 0:
+        show_stage(stage, monster, digits, hp, ascii_art)
+        command = input("> ").strip()
 
-    tries = 0
-    while True:
-        guess = input("予想 > ").strip()
+        if command == "1":
+            guess = input(f"{digits}桁の数字を入力してください > ").strip()
 
-        # ===== ② 入力コマンドに足す（ヒント など）: ここに書く（import もここに） =====
-        # 例:  from .hint import hint
-        #      if guess == "h":
-        #          print(hint(secret)); continue
-        from .hint import hint
+            # 入力チェック
+            if len(guess) != digits or not guess.isdigit():
+                print(f"【ミス！】{digits}桁の数字じゃないと攻撃できない！")
+                continue
 
-        print(hint(secret, guess))  # 数の和を比較するヒントを追加
+            # 攻撃（Hit & Blow 判定）
+            hit, blow = judge(secret, guess)
+            print(f"【攻撃！】 {guess} を放った！ => Hit={hit} Blow={blow}")
 
-        if check_limit(tries, secret, digits):
-            break
+            if hit == digits:
+                print(f"やった！ {monster} をたおした！")
+                return True
+            else:
+                print(f"{monster} の反撃！ HPが1減った。")
+                hp -= 1
 
-        if len(guess) != digits or not guess.isdigit():
-            print(f"{digits} 桁の数字で入力してね")
-            continue
-        tries += 1
-        hit, blow = judge(secret, guess)
-        print(f"  Hit={hit}  Blow={blow}")
-        if hit == digits:
-            return True
-        if check_limit(tries, secret, digits):
+        elif command == "2":
+            print("【呪文！】 魔法でヒントを読み取った！")
+            # 呪文の場合は guess がないので空文字などを渡すか、仕様に合わせて調整
+            print(f"ヒント: {hint(secret, '')}")
+            print("体力を消耗した... HPが1減った。")
+            hp -= 1
+
+        elif command == "3":
+            print("勇者は逃げ出した...")
             return False
+
+        else:
+            print("1～3を入力してください")
+
+        print()  # 空行を入れて見やすくする
+
+    # HPが0になった場合
+    print("=" * 40)
+    print("HPがなくなった… GAME OVER")
+    print(f"正解は {secret} だった...")
+    print("=" * 40)
+    return False
+
+
+def campaign_mode():
+    print("\n★★★ 裏モード「RPG編」スタート！ ★★★\n")
+
+    # スライムのアスキーアート
+    slime_art = "     ／￣＼\n   ／・ω・＼\n   ＼＿＿／"
+
+    # ステージ設定（ステージ数, 桁数, モンスター名, HP, アート）
+    stages = [
+        {"stage": 1, "digits": 3, "monster": "スライム", "hp": 8, "art": slime_art},
+        {"stage": 2, "digits": 4, "monster": "ゴーレム", "hp": 15, "art": ""},
+        {"stage": 3, "digits": 5, "monster": "魔王", "hp": 20, "art": ""},
+    ]
+
+    for s in stages:
+        # ステージ実行
+        is_clear = play(s["stage"], s["digits"], s["monster"], s["hp"], s["art"])
+
+        if not is_clear:
+            print("世界は闇に包まれた...")
+            return  # 負けたらそこで終了
+
+        if s["stage"] < len(stages):
+            print("\n>> 次のステージへ進む...\n")
+
+    print("\n==================================")
+    print("完全クリア！世界に平和が戻った！")
+    print("==================================")

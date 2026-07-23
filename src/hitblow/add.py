@@ -1,7 +1,6 @@
 """コマンドの入口。第3回で `hitblow` コマンドがここ（main）を呼ぶ。"""
 
-from .game import play
-from .campaign import campaign_mode
+from .game import campaign_mode
 
 
 def main():
