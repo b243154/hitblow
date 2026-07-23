@@ -10,7 +10,7 @@ from .core import judge, make_secret
 from .limit import check_limit
 
 
-def play(digits=3):
+def play(digits):
     secret = make_secret(digits)
     print(f"Hit & Blow（{digits} 桁・重複なし）")
 
@@ -38,7 +38,6 @@ def play(digits=3):
         hit, blow = judge(secret, guess)
         print(f"  Hit={hit}  Blow={blow}")
         if hit == digits:
-            # ===== ③ 勝利時に足す（スコア・履歴 など）: ここに書く =====
-
-            print(f"正解！ {tries} 回で当たり（答え {secret}）")
-            break
+            return True
+        if check_limit(tries, secret, digits):
+            return False

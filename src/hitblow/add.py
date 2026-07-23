@@ -1,11 +1,17 @@
 """コマンドの入口。第3回で `hitblow` コマンドがここ（main）を呼ぶ。"""
 
 from .game import play
+from .campaign import campaign_mode
 
 
 def main():
     # 1. ユーザーに桁数を入力してもらう
     user_input = input("何桁で遊びますか？（そのままEnterで3桁）> ").strip()
+
+    if user_input == "4649":
+        print("裏モード発動！")
+        campaign_mode()
+        return
 
     # 2. 数字が正しく入力されたらその桁数で、そうでなければデフォルト（3桁）で開始
     if user_input.isdigit() and int(user_input) > 0:
